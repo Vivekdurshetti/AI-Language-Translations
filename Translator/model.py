@@ -10,10 +10,11 @@ def load_model():
 
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
+    # Load model on CPU for deployment environments
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_NAME,
-        torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-        device_map="auto"
+        torch_dtype=torch.float32,  # Use float32 for CPU
+        device_map={"": "cpu"}  # Explicitly map to CPU
     )
 
     print("✅ Model loaded")
