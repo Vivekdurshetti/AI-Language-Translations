@@ -5,37 +5,30 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import torch
 
 
-def translate_text(text, target_lang):
+def translate_text(text, target_lang_code):
     tokenizer, model = load_model()
-    prompt = f"Translate to {target_lang}: {text}"
+    tokenizer.src_lang = "en"
+    tokenizer.tgt_lang = target_lang_code
 
-    inputs = tokenizer(prompt, return_tensors="pt", padding=True, truncation=True)
+    inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True)
 
     with torch.no_grad():
         outputs = model.generate(
             **inputs,
+            forced_bos_token_id=tokenizer.get_lang_id(target_lang_code),
             max_new_tokens=100,
             temperature=0.7,
             do_sample=True,
-            top_p=0.9,
-            eos_token_id=tokenizer.eos_token_id,
-            pad_token_id=tokenizer.pad_token_id
+            top_p=0.9
         )
 
-    result = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-    # Extract only the translation part (remove the prompt)
-    if ":" in result:
-        result = result.split(":", 1)[1].strip()
-
+    result = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
     return result
 
 
 def translate_pipeline(text, lang_code):
-    target_lang = LANGUAGES[lang_code]
-
     masked_text, entities = mask_entities(text)
-    translated = translate_text(masked_text, target_lang)
+    translated = translate_text(masked_text, lang_code)
     final_text = restore_entities(translated, entities)
 
     return final_text
