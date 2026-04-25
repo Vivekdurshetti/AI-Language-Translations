@@ -7,4 +7,4 @@ LANGUAGES = {
     "pt": "Portuguese"
 }
 
-MODEL_NAME = "Qwen/Qwen2.5-1.5B-Instruct"
+MODEL_NAME = "microsoft/DialoGPT-small"
