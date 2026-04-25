@@ -1,4 +1,4 @@
-from Translator.model import tokenizer, model
+from Translator.model import load_model
 from Translator.ner import mask_entities, restore_entities
 from Config import LANGUAGES
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -6,6 +6,7 @@ import torch
 
 
 def translate_text(text, target_lang):
+    tokenizer, model = load_model()
     prompt = f"Translate to {target_lang}: {text}"
 
     inputs = tokenizer(prompt, return_tensors="pt", padding=True, truncation=True)
