@@ -7,4 +7,4 @@ LANGUAGES = {
     "pt": "Portuguese"
 }
 
-MODEL_NAME = "microsoft/DialoGPT-small"
+MODEL_NAME = "facebook/m2m100_418M"
